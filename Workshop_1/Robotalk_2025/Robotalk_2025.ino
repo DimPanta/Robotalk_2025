@@ -15,11 +15,43 @@ float l2=9.5;
 /* ------------------------------ FUNCTIONS ------------------------------ */
 
 void Inverse_Kin(float px, float py) {
-  float cosq2 = (pow(px,2)+ pow(py,2) - pow(l1,2)-  pow(l2,2))/(2*l1*l2);
+  // float cosq2, sinq2;
+  // float d1, d2, a;
+
+  float cosq2 = (pow(px, 2) + pow(py, 2) - pow(l1, 2) - pow(l2, 2)) /(2*l1*l2);
+  cosq2 = constrain(cosq2,-1.0,1.0);
+  float sinq2 = sqrt(1 - pow(cosq2,2));
+  q2 = atan2(sinq2, cosq2);
+
+  float d1 = l1 + l2*cosq2;
+  float d2 = l2*sinq2;
+  float a = atan2(d2,d1);
+
+  q1 = atan2(py,px) - a;
+
+  q1 = (q1 * 180)/PI;
+  q2 = (q2 * 180)/PI;
+
+  joint_1.write(q1);
+  joint_2.write(q2);
 }
 
 void line(float x_start, float y_start, float x_end, float y_end, float u) {
- 
+  float px = x_start;
+  float py = y_start;
+
+  Inverse_Kin(px, py);
+
+  delay(100);
+
+  for (float s = u; s < 1.0 + u/2; s += u) {
+    px = x_start + s * (x_end - x_start);
+    py = y_start + s * (y_end - y_start);
+
+    Inverse_Kin(px, py);
+
+    delay(100);
+  }
 }
 
 /* ------------------------------ SETUP ------------------------------ */
@@ -58,6 +90,13 @@ void loop() {
   }
 
   //--------- KINEMATICS ---------//
-  
+  Inverse_Kin(x[0], y[0]);
+  delay(1000);
+
+
+  for(int i=0; i<=(size-2); i++) {
+    line(x[i], y[i], x[i+1], y[i+1], 0.05);
+    delay(10);
+  }
   
 }
