@@ -15,7 +15,7 @@ float l2=9.5;
 /* ------------------------------ FUNCTIONS ------------------------------ */
 
 void Inverse_Kin(float px, float py) {
-  float cosq2 = (pow(px,2)+ pow(py,2) - pow(l1,2)-  pow(l2,2))/(2*l1*l2);
+  
 }
 
 void draw_line(float x_start, float y_start, float x_end, float y_end, float u) {
